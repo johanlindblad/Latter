@@ -72,6 +72,11 @@ abstract class Latter_Core_Control
 	 */
 	abstract public function render();
 	
+	public function __toString()
+	{
+		return $this->render();
+	}
+	
 	protected function attributes()
 	{
 		return array(

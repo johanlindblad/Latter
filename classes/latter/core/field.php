@@ -74,12 +74,7 @@ abstract class Latter_Core_Field extends Latter_Control
 		
 		return $view->render();
 	}
-	
-	public function __toString()
-	{
-		return $this->render();
-	}
-		
+			
 	public function value($set = NULL)
 	{
 		if(func_num_args() == 0)
