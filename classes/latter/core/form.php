@@ -99,7 +99,7 @@ class Latter_Core_Form
 				$params = array();
 			}
 			
-			$this->_buttons[] = new $class_name($name, $params);
+			$this->_buttons[$name] = new $class_name($name, $params);
 		}
 
 		return $this;
