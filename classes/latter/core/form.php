@@ -253,7 +253,7 @@ class Latter_Core_Form
 	
 	public function __toString()
 	{
-		return $this->render();
+		return (String) $this->render();
 	}
 	
 	protected function arguments()
