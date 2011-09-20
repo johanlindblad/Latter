@@ -38,7 +38,7 @@ abstract class Latter_Core_Field extends Latter_Control
 	 */
 	public function initialize($params)
 	{
-		$this->_value = NULL;
+		$this->_value = arr::get($params, 'value');
 		$this->_error = NULL;
 		$this->_rules = array();
 		$this->_view_class = 'View_Latter_Field';

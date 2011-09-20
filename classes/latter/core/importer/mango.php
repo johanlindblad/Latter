@@ -40,6 +40,8 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 				$options['required'] = TRUE;
 			}
 			
+			$options['value'] = $model->$name;
+			
 			switch(arr::get($extra, 'type'))
 			{
 				case 'string':
