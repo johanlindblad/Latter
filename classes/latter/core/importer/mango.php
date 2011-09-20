@@ -57,6 +57,11 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					
 					$form->field($name, $type, $options);
 					break;
+					
+				case 'email':
+						$this->_fields[] = $name;
+						$form->field($name, 'email', $options);
+						break;
 				
 				case 'int':
 						$this->_fields[] = $name;
@@ -66,6 +71,14 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 				case 'date':
 						$this->_fields[] = $name;
 						$form->field($name, 'date', $options);
+				
+				case 'enum':
+						if(is_array($values = arr::get($extra, 'values')))
+						{
+							$this->_fields[] = $name;
+							$options['options'] = array_flip($values);
+							$form->field($name, 'select', $options);
+						}
 			}
 		}
 	}
