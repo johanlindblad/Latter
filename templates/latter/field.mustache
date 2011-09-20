@@ -1,5 +1,6 @@
-<dt><label for="{{name}}">{{#label}}{{label}} {{/label}}</label></dt>
+{{#label}}<dt><label for="{{name}}">{{label}} </label></dt>
 <dd>
 {{> field}}
 <span class="error">{{error}}</span>
-</dd>
+</dd>{{/label}}
+{{^label}}{{> field}}{{/label}}
