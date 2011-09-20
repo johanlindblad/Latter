@@ -48,7 +48,14 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 			{
 				case 'string':
 					$this->_fields[] = $name;
-					$form->field($name, 'text', $options);
+					$type = 'text';
+					
+					if(($name == 'password' && arr::get($extra, 'password') !== FALSE) || arr::get($extra, 'password') === TRUE)
+					{
+						$type = 'password';
+					}
+					
+					$form->field($name, $type, $options);
 					break;
 				
 				case 'int':
