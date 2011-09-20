@@ -40,7 +40,9 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 				$options['required'] = TRUE;
 			}
 			
+			$options['rules'] = arr::get($rules, $name);
 			$options['value'] = $model->$name;
+			$options['importer_field'] = TRUE;
 			
 			switch(arr::get($extra, 'type'))
 			{
