@@ -177,6 +177,8 @@ class Latter_Core_Form
 		}
 		catch(Validation_Exception $e)
 		{
+			$this->_valid = FALSE;
+			
 			foreach($e->array->errors('') as $field_name => $error)
 			{
 				arr::get($this->_fields, $field_name)->add_error($error);
