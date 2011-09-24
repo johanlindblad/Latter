@@ -52,6 +52,11 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					
 					if(($name == 'password' && arr::get($extra, 'password') !== FALSE) || arr::get($extra, 'password') === TRUE)
 					{
+						if($model->loaded())
+						{
+							unset($options['required']);
+						}
+						unset($options['value']);
 						$type = 'password';
 					}
 					
@@ -94,6 +99,17 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 		{
 			if(in_array($field, $this->_fields))
 			{
+				/*
+				 * Skip the field if it's called password and it's empty. This is so that if you do
+				 * password hashing in create()/update(), the hash will only be changed if the form
+				 * field contained something.
+				 * Todo: also listen to the password-parameter used in the add_fields method.
+				 */
+				if($field == 'password' && empty($value))
+				{
+					continue;
+				}
+				
 				$this->_model->$field = $value;
 			}
 		}
