@@ -76,6 +76,14 @@ class Latter_Core_Form
 		return $this;
 	}
 	
+	public function error($field_name, $error)
+	{
+		if($field = arr::get($this->_fields, $field_name))
+		{
+			$field->add_error($error);
+		}
+	}
+	
 	public function buttons($buttons = array())
 	{
 		if(empty($buttons))

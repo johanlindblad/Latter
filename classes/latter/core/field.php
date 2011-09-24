@@ -100,6 +100,7 @@ abstract class Latter_Core_Field extends Latter_Control
 	
 	public function add_error($error)
 	{
+		// This is so that it works when validate was run without parameters
 		if(is_array($error))
 		{
 			$this->_error = arr::get($error, 0);
