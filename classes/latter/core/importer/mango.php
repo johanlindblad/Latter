@@ -75,7 +75,12 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					
 				case 'date':
 					$this->_fields[] = $name;
-					$options['value'] = Date('Y-m-d', $options['value']->sec);
+					
+					if($options['value'] instanceof MongoDate)
+					{
+						$options['value'] = Date('Y-m-d', $options['value']->sec);
+					}
+					
 					$form->field($name, 'date', $options);
 					break;
 				
