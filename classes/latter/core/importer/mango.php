@@ -89,6 +89,7 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					{
 						$this->_fields[] = $name;
 						$options['options'] = array_flip($values);
+						$options['value'] = array_search($options['value'], arr::get($extra, 'values'));
 						$form->field($name, 'select', $options);
 					}
 					break;
