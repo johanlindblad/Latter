@@ -26,6 +26,16 @@ class Latter_Core_Field_Select extends Latter_Field
 		$array['options'] = $this->_options;
 		return $array;
 	}
+	
+	public function value_text()
+	{
+		if($text = array_search($this->_value, $this->_options))
+		{
+			return $text;
+		}
+		
+		return FALSE;
+	}
 }
 
 ?>
