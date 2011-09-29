@@ -117,6 +117,13 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					continue;
 				}
 				
+				$fields = $this->_model->fields();
+				if($fields[$field]['type'] == 'enum')
+				{
+					$this->_model->$field = arr::get($fields[$field]['values'], $value);
+					break;
+				}
+				
 				$this->_model->$field = $value;
 			}
 		}
