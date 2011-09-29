@@ -1,6 +1,6 @@
 <?php
 
-class Mango extends Latter_Mongo
+class Mango extends Latter_Mango
 {
 }
 
