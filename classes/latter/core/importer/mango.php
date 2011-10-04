@@ -32,15 +32,23 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 		$fields = $model->fields();
 		$rules = $model->rules();
 		
-		// Flip the fields array so that we can look for field names in the array keys.
-		if(arr::get($data, 'fields'))
+		// Flip the fields and ignore_fields arrays so that we can look for field names in the array keys.
+		foreach(array('fields', 'ignored_fields') as $key)
 		{
-			$data['fields'] = array_flip($data['fields']);
+			if(arr::get($data, $key))
+			{
+				$data[$key] = array_flip($data[$key]);
+			}
 		}
 		
 		foreach($fields as $name => $extra)
 		{
 			if(arr::get($data, 'fields') && arr::path($data, 'fields.'.$name) === NULL)
+			{
+				continue;
+			}
+			
+			if(arr::get($data, 'ignored_fields') && arr::path($data, 'ignored_fields.'.$name) !== NULL)
 			{
 				continue;
 			}
