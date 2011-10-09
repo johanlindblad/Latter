@@ -140,7 +140,7 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 				if($fields[$field]['type'] == 'enum')
 				{
 					$this->_model->$field = arr::get($fields[$field]['values'], $value);
-					break;
+					continue;
 				}
 				
 				$this->_model->$field = $value;
