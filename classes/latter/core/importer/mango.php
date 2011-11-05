@@ -89,7 +89,14 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 				
 				case 'int':
 					$this->_fields[] = $name;
-					$form->field($name, 'number', $options);
+					$type = arr::get($extra, 'input_type', 'number');
+					
+					if($type == 'range' && $step = arr::get($extra, 'step'))
+					{
+						$options['step'] = $step;
+					}
+					
+					$form->field($name, $type, $options);
 					break;
 					
 				case 'date':
