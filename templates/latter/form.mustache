@@ -1,6 +1,6 @@
-{{& open}}
+{{^sub_form}}{{& open}}{{/sub_form}}
 <dl>
 {{& fields}}
 </dl>
-{{& buttons}}
-{{& close}}
+{{^sub_form}}{{& buttons}}
+{{& close}}{{/sub_form}}

@@ -31,6 +31,11 @@ abstract class Latter_Core_Control
 	 * The template file that's supposed to be used
 	 */
 	protected $_template;
+	
+	/*
+	 * The control's parent form
+	 */
+	protected $_form;
 
 	/*
 	 * Constructor.
@@ -45,6 +50,15 @@ abstract class Latter_Core_Control
 		if(arr::get($params, 'label'))
 		{
 			$this->_label = $params['label'];
+		}
+		
+		if($form = arr::get($params, 'form'))
+		{
+			$this->_form = $form;
+		}
+		else
+		{
+			throw new Kohana_Exception('The control needs to be provided with its parent form.');
 		}
 		
 		$this->_view_class = NULL;
@@ -82,6 +96,7 @@ abstract class Latter_Core_Control
 		return array(
 			'name' => $this->_name,
 			'label' => $this->_label,
+			'form' => $this->_form,
 		);
 	}
 }

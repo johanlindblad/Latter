@@ -35,6 +35,11 @@ class View_Latter_Core_Form extends Kostache
 			'charset' => Kohana::$charset,
 		));
 	}
+	
+	function sub_form()
+	{
+		return arr::get($this->data, 'sub_form');
+	}
 		
 	function __toString()
 	{

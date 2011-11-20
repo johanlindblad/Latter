@@ -19,16 +19,21 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 	 * 		  but in the future more options may become available.
 	 * @param The form to add the fields to.
 	 */
-	public function add_fields($data, Latter_Form $form)
+	public function add_fields($data, Latter_Form $parent_form)
 	{
-		$this->_form = $form;
+		$this->_parent_form = $parent_form;
+		
+		// The importer creates its own sub form
+		$form = Latter::factory()
+				->name(arr::get($data, 'name', 'mango'));
+		
 		$model = $this->_model = arr::get($data, 'model');
 		
 		if( ! $model instanceof Mango)
 		{
 			return;
 		}
-				
+
 		$fields = $model->fields();
 		$rules = $model->rules();
 		
@@ -119,8 +124,15 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 						$form->field($name, 'select', $options);
 					}
 					break;
+				
+				case 'has_one':
+					$form->import($model->$name, compact($name));
+					break;
 			}
 		}
+		
+		$this->_parent_form->sub_form($form);
+		$this->_form =& $form;
 	}
 	
 	/*
@@ -156,11 +168,31 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 	}
 	
 	/*
-	 * A simple getter for the model
+	 * Validate and return any errors
 	 */
-	public function model()
+	public function validate()
 	{
-		return $this->_model;
+		$errors = array();
+		
+		try
+		{
+			$this->_model->check();
+		}
+		catch(Mango_Validation_Exception $e)
+		{
+			foreach($e->array->errors('') as $field_name => $error)
+			{
+				if(in_array($field_name, $this->_fields))
+				{
+					$this->_form->error($field_name, $error);
+				}
+			}
+		}
+	}
+	
+	public function valid()
+	{
+		return $this->_form->valid();
 	}
 }
 

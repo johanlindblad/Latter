@@ -9,6 +9,11 @@
 class Latter_Core_Form
 { 
 	/*
+	 * The name of the form
+	 */
+	protected $_name;
+	
+	/*
 	 * An array containing the fields themselves.
 	 */
 	protected $_fields = array();
@@ -54,6 +59,11 @@ class Latter_Core_Form
 	protected $_sent;
 	
 	/*
+	 * This is set to the parent form is this is a sub form
+	 */
+	protected $_sub_form_of = NULL;
+	
+	/*
 	 * Constructor.
 	 *
 	 * @param string $action action parameter for the form tag
@@ -61,10 +71,49 @@ class Latter_Core_Form
 	 */
 	public function __construct($action = '', $method = 'POST')
 	{
-		$this->_action = $action;	
+		$this->_name = 'form';
+		$this->_action = $action;
 		$this->_method = $method;
-		
+
 		$this->_importers = array();
+		
+		return $this;
+	}
+	
+	public function name($set_to = NULL)
+	{
+		if($set_to)
+		{
+			$this->_name = $set_to;
+			return $this;
+		}
+		
+		return $this->_name;
+	}
+	
+	public function full_name()
+	{
+		$name = $this->_name;
+		
+		if($this->_sub_form_of instanceof Latter_Form)
+		{
+			$name = strtr(':parent_name[:form_name]', array(
+				':parent_name' => $this->_sub_form_of->full_name(),
+				':form_name' => $this->name()
+			));
+		}
+		
+		return $name;
+	}
+	
+	public function sub_form_of($set_to = NULL)
+	{
+		if($set_to === NULL)
+		{
+			return $this->_sub_form_of;
+		}
+		
+		$this->_sub_form_of = $set_to;
 		
 		return $this;
 	}
@@ -72,7 +121,18 @@ class Latter_Core_Form
 	public function field($field_name, $type, $params = array())
 	{
 		$class_name = 'Latter_Field_'.ucfirst($type);
+		$params['form'] = $this;
+		
 		$this->_fields[$field_name] = new $class_name($field_name, $params);
+		return $this;
+	}
+	
+	public function sub_form(Latter_Form $form)
+	{
+		$form->sub_form_of($this);
+		
+		$this->_fields[$form->name()] = $form;
+		
 		return $this;
 	}
 	
@@ -82,13 +142,18 @@ class Latter_Core_Form
 		{
 			$field->add_error($error);
 		}
+		
+		$this->_valid = FALSE;
 	}
 	
 	public function buttons($buttons = array())
 	{
 		if(empty($buttons))
 		{
-			$buttons = array('submit' => TRUE);
+			if( ! $this->sub_form_of())
+			{
+				$buttons = array('submit' => TRUE);
+			}
 		}
 		
 		foreach($buttons as $name => $params)
@@ -107,6 +172,8 @@ class Latter_Core_Form
 				$params = array();
 			}
 			
+			$params['form'] = $this;
+
 			$this->_buttons[$name] = new $class_name($name, $params);
 		}
 
@@ -146,7 +213,14 @@ class Latter_Core_Form
 		
 		foreach($this->_fields as $name => &$field)
 		{
-			$values[$name] = $field->value();
+			if($field instanceof Latter_Form)
+			{
+				$values[$name] = $field->values();
+			}
+			else
+			{
+				$values[$name] = $field->value();
+			}
 		}
 		
 		$this->_values = $values;
@@ -162,35 +236,42 @@ class Latter_Core_Form
 		}
 		
 		$this->_validation = Validation::factory($this->values());
+		$valid = TRUE;
 		
-		foreach($this->_fields as &$field)
+		foreach($this->_fields as $name => &$field)
 		{
-			$field->add_rules($this->_validation);
-		}
+			if($field instanceof Latter_Form)
+			{
+				$field->validate();
 				
-		$valid = $this->_valid = $this->_validation->check();
-		
-		if( ! $valid)
-		{
-			$errors = $this->_validation->errors();
-			foreach($errors as $name => $error)
+				if( ! $field->valid())
+				{
+					$valid = FALSE;
+				}
+			}
+			else
 			{
-				$this->_fields[$name]->add_error($error);
+				$field->add_rules($this->_validation);
 			}
 		}
-		
-		try
+
+		if( ! $this->_validation->check())
 		{
-			$this->_importer->model()->check();
-		}
-		catch(Validation_Exception $e)
-		{
-			$this->_valid = FALSE;
-			
-			foreach($e->array->errors('') as $field_name => $error)
+			foreach($this->_validation->errors() as $name => $error)
 			{
-				arr::get($this->_fields, $field_name)->add_error($error);
+				if($field = arr::get($this->_fields, $name) AND $field instanceof Latter_Field)
+				{
+					$field->add_error($error);
+				}
 			}
+		}
+
+		$this->_valid OR $this->_valid = $valid;
+		
+		if($this->_importer instanceof Latter_Importer)
+		{
+			$this->_importer->validate();
+			$this->_importer->valid() OR $this->_valid = FALSE;
 		}
 		
 		return $this;
@@ -208,10 +289,10 @@ class Latter_Core_Form
 			switch($this->_method)
 			{
 				case 'POST':
-					$values = Request::current()->post();
+					$values = arr::get(Request::current()->post(), $this->name(), array());
 					break;
 				case 'GET':
-					$values = Request::current()->query();
+					$values = arr::get(Request::current()->query(), $this->name(), array());
 					break;
 				default:
 					$values = array();
@@ -228,7 +309,14 @@ class Latter_Core_Form
 
 		foreach($this->_fields as $name => $field)
 		{
-			$field->value(arr::get($values, $name));
+			if($field instanceof Latter_Form)
+			{
+				$field->load(arr::get($values, $name));
+			}
+			else
+			{
+				$field->value(arr::get($values, $name));
+			}
 		}
 		
 		if($this->_importer)
@@ -271,6 +359,7 @@ class Latter_Core_Form
 		return array(
 			'action' => $this->_action,
 			'method' => $this->_method,
+			'sub_form' => $this->_sub_form_of !== NULL,
 		);
 	}
 }

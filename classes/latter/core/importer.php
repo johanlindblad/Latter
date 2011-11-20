@@ -11,6 +11,11 @@ abstract class Latter_Core_Importer
 	/*
 	 * The form the importer belongs to
 	 */
+	protected $_parent_form;
+	
+	/*
+	 * The importer's own form
+	 */
 	protected $_form;
 	
 	/*
