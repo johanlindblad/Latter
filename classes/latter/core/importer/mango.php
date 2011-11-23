@@ -5,7 +5,7 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 	/*
 	 * The fields this importer cares about
 	 */
-	protected $_fields;
+	protected $_fields = array();
 	
 	/*
 	 * The model that's being imported
