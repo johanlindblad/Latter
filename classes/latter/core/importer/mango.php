@@ -126,7 +126,7 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 					break;
 				
 				case 'has_one':
-					$form->import($model->$name, compact($name));
+					$form->import($model->$name, array('name' => $name));
 					break;
 			}
 		}
