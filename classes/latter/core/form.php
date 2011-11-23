@@ -200,11 +200,19 @@ class Latter_Core_Form
 		
 		if(class_exists($class_name))
 		{
-			$this->_importer = $importer = new $class_name();
+			$importer = new $class_name();
 			$importer->add_fields($data, $this);
 		}
 		
 		return $this;
+	}
+	
+	/*
+	 * This will be called by the importer when importing is done
+	 */
+	public function importer($importer)
+	{
+		$this->_importer = $importer;
 	}
 	
 	function values()

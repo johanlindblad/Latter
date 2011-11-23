@@ -132,6 +132,7 @@ class Latter_Core_Importer_Mango extends Latter_Importer
 		}
 		
 		$this->_parent_form->sub_form($form);
+		$form->importer($this);
 		$this->_form =& $form;
 	}
 	
