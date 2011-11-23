@@ -1,6 +1,6 @@
 <?php
 
-class View_Latter_Core_Field_Select extends Kostache
+class View_Latter_Core_Field_Select extends View_Latter_Field
 {
 	public function options()
 	{

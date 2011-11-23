@@ -1,6 +1,6 @@
 <?php
 
-class View_Latter_Core_Button extends Kostache
+class View_Latter_Core_Button extends View_Latter_Field
 {
 	public function field_name()
 	{
