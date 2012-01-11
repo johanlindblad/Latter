@@ -1,3 +1,7 @@
+## No longer actively maintained ##
+
+I am currently using Ruby for all new projects so this is no longer being updated. Feel free to fork it if you need it - I may delete this soon.
+
 # Latter #
 
 ## What is it? ##
